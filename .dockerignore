@@ -1,0 +1,6 @@
+.git
+.github
+test
+*.test.js
+*.cmd
+README.md

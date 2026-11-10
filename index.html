@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>世界树急救队 · 3D 三界合作</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">
+    {"imports":{"three":"./vendor/three/three.module.js"}}
+  </script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="世界树急救队首页">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 34V16M20 23l-9-6m9 2 9-7M13 34h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 4c4 0 7 3 7 6 4-1 8 2 8 6 0 5-4 7-8 7H13c-5 0-8-3-8-7 0-4 4-7 8-6 0-3 3-6 7-6Z" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <span>世界树急救队</span>
+    </a>
+    <div class="masthead-actions">
+      <span class="build-tag"><i></i> 3D 合作</span>
+      <button class="quiet" id="reset" type="button">重新开始</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div>
+        <p class="eyebrow"><span></span><b id="level-kicker">天界试炼</b></p>
+        <h1 id="level-title">云冠织雨廊</h1>
+        <p class="intro-copy" id="level-intro">观察入口的水波纹，接通雨门，把铜碗送到落雨点。</p>
+      </div>
+      <div class="session-meta"><span>双人同屏</span><span>首玩目标约 5 分钟</span></div>
+    </section>
+
+    <nav class="realm-progress" aria-label="三界进度">
+      <ol>
+        <li data-level="sky" aria-current="step"><span>01</span> 天界 <small>取雨</small></li>
+        <li data-level="field"><span>02</span> 人界 <small>引水</small></li>
+        <li data-level="root"><span>03</span> 冥界 <small>育苗</small></li>
+      </ol>
+    </nav>
+
+    <div class="play-grid">
+      <section class="scene-shell" aria-label="当前三维场景">
+        <div class="viewport" id="viewport">
+          <canvas id="terrace" tabindex="0" aria-label="三维场景，点击互动目标可选取道具落点"></canvas>
+          <div class="scene-toolbar">
+            <span class="live-label"><i></i> <span id="scene-status">正在建立场景</span></span>
+            <div class="view-toggle" aria-label="场景视角">
+              <button type="button" data-view="perspective" aria-pressed="true">斜视</button>
+              <button type="button" data-view="overhead" aria-pressed="false">俯视</button>
+            </div>
+          </div>
+          <div class="scene-markers" id="scene-markers" aria-hidden="true"></div>
+          <div id="hand-cursor" class="hand-cursor" aria-hidden="true" hidden><i></i></div>
+          <video id="camera-preview" class="camera-preview" autoplay playsinline muted aria-label="校准预览" hidden></video>
+          <div class="scene-footer" aria-hidden="true">
+            <span class="scene-index" id="scene-index">01</span>
+            <span><b id="scene-location">世界树上层</b><br><small id="scene-subtitle">云台与三道雨门</small></span>
+          </div>
+          <p id="scene-error" class="scene-error" role="status" hidden></p>
+        </div>
+        <div class="scene-legend" id="scene-legend"></div>
+      </section>
+
+      <aside class="console" aria-label="合作控制台">
+        <div class="console-heading">
+          <div>
+            <p class="eyebrow">合作控制台</p>
+            <h2 id="console-title">接通雨门</h2>
+          </div>
+          <div class="rain-token" id="token" title="携带空雨碗" aria-label="携带空雨碗">
+            <svg viewBox="0 0 32 36" aria-hidden="true">
+              <path d="M16 2C13 9 5 15 5 23a11 11 0 0 0 22 0C27 15 19 9 16 2Z" fill="currentColor"/>
+              <path d="M11 22c0 4 2 6 5 6" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2" opacity=".74"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="instructions" id="instructions" role="status" aria-live="polite" aria-atomic="true">
+          <strong id="status-title">先转动枝桥</strong>
+          <p id="status-detail">机关师观察门纹。搬运员把铜碗对准落雨点。</p>
+        </div>
+        <div class="gate-controls" id="gate-controls"></div>
+
+        <div class="readiness" aria-label="配合状态">
+          <span id="route-ready"><i></i><span id="route-label">枝桥已设</span></span>
+          <span id="intake-ready"><i></i><span id="intake-label">铜碗就位</span></span>
+        </div>
+        <button type="button" class="action-button" id="action" disabled>
+          <span id="action-label">对准落雨点</span><span class="action-key">↵</span>
+        </button>
+        <details class="hint">
+          <summary id="hint-name">问翎雨</summary>
+          <p id="hint-text">入口石上的水波纹能告诉你哪扇是雨门。</p>
+        </details>
+        <p class="finish-summary" id="finish-summary" hidden></p>
+      </aside>
+    </div>
+
+    <div class="roles">
+      <section class="role-card">
+        <div class="role-badge">01</div>
+        <div class="role-text">
+          <h2>机关师 <span>键盘</span></h2>
+          <p id="mechanic-note">按 1–3 转动枝桥，观察门框和入口的纹样。</p>
+        </div>
+      </section>
+      <section class="role-card carrier">
+        <div class="role-badge">02</div>
+        <div class="role-text">
+          <h2>搬运员 <span>体感 / 鼠标</span></h2>
+          <p id="camera-note" aria-live="polite">点选落雨点，或开启体感，用手腕悬停对准并下移放下铜碗。</p>
+          <div class="camera-controls">
+            <button id="camera-toggle" class="camera-toggle" type="button" aria-pressed="false" disabled>开启体感</button>
+            <label><span class="sr-only">操作手</span><select id="hand" aria-label="操作手"><option value="right">右手</option><option value="left">左手</option></select></label>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="footer"><span>三界闯关日 · 世界树修复行动</span><span>摄像头画面仅用于本机实时识别</span></footer>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
